@@ -1,0 +1,8 @@
+#pragma once
+
+#define RENDERDEPTH 5
+#define SCREENWIDTH 800
+#define SCREENHEIGHT 600
+#define ONE_THIRTIETH 0.0333
+#define ONE_SIXTIETH  0.0167
+#define PI 3.14159265
