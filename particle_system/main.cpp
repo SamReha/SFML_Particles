@@ -26,7 +26,7 @@ sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "Particle Demo
 
 int main(int, char const**) {
     // Load our assets!
-    AssetManager assetManager();
+    AssetManager assetManager;
     string assetPath = "assets/";
 
     // Preload sprites
@@ -49,7 +49,7 @@ int main(int, char const**) {
     addGameObject(paddle);*/
 
     sf::Clock clock;
-    float accumulatedTime = 0;
+    double accumulatedTime = 0;
 
     while (window.isOpen()) {
         // Handle OS events
@@ -75,7 +75,7 @@ int main(int, char const**) {
             }
         }
 
-        float deltaTime = clock.restart().asSeconds();
+        double deltaTime = clock.restart().asSeconds();
         accumulatedTime += deltaTime;
         while (accumulatedTime >= ONE_SIXTIETH) {
             update();
