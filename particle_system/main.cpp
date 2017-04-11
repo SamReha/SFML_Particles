@@ -60,19 +60,19 @@ int main(int, char const**) {
                 window.close();
             }
 
-            //// Handle key press events
-            //if (event.type == sf::Event::KeyPressed) {
-            //    switch (event.key.code) {
-            //    case sf::Keyboard::Escape:
-            //        window.close();
-            //        break;
-            //    case sf::Keyboard::Space:
-            //        paddle->fireBall();
-            //        break;
-            //    default:
-            //        break;
-            //    }
-            //}
+            // handle key press events
+            if (event.type == sf::Event::KeyPressed) {
+                switch (event.key.code) {
+                case sf::Keyboard::Escape:
+                    window.close();
+                    break;
+                /*case sf::keyboard::space:
+                    paddle->fireball();
+                    break;*/
+                default:
+                    break;
+                }
+            }
         }
 
         float deltaTime = clock.restart().asSeconds();
