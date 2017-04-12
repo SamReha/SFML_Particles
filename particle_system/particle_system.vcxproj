@@ -149,15 +149,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="assetmanager.cpp" />
-    <ClCompile Include="gameobject.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="particlemanager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assetmanager.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="gameobject.h" />
-    <ClInclude Include="utilities.h" />
+    <ClInclude Include="particlemanager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
