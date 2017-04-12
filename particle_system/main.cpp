@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "config.h"
+#include "utilities.h"
 #include "assetmanager.h"
 #include "gameobject.h"
 

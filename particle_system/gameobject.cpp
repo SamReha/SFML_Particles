@@ -2,8 +2,8 @@
 
 /* GameObject */
 void GameObject::update(sf::RenderWindow& win, std::vector<GameObject*> objects) {
-    int newXPosition = clamp((int)(position.x + velocity.x), -1, SCREENWIDTH + 1);
-    int newYPosition = clamp((int)(position.y + velocity.y), -1, SCREENHEIGHT + 1);
+    float newXPosition = std::max((float)(-1), std::min(position.x + velocity.x, (float)(SCREENWIDTH + 1)));
+    float newYPosition = std::max((float)(-1), std::min(position.y + velocity.y, (float)(SCREENHEIGHT + 1)));
 
     position.x = newXPosition;
     position.y = newYPosition;
