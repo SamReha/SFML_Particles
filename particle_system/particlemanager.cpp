@@ -24,12 +24,41 @@ void ParticleSystem::resetParticle(std::size_t index) {
 }
 
 /* Public */
+ParticleSystem::ParticleSystem(unsigned int count, sf::Texture* tex) :
+    m_particles(count),
+    m_vertices(sf::Points, count),
+    m_lifetime(sf::seconds(3)),
+    m_emitter(0, 0),
+    m_gravity(0) {
+    sf::Vector2f rectSize(64, 64);
+    m_rect.setSize(rectSize);
+    m_rect.setTexture(tex, false);
+}
+
 void ParticleSystem::setEmitter(sf::Vector2f position) {
     m_emitter = position;
 }
 
 void ParticleSystem::setGravity(float newGravity) {
     m_gravity = newGravity;
+}
+
+int ParticleSystem::count() {
+    return m_particles.size();
+}
+
+void ParticleSystem::addParticle() {
+    Particle newParticle;
+    m_particles.push_back(newParticle);
+    m_vertices.resize(m_particles.size());
+    resetParticle(m_particles.size() - 1);
+}
+
+void ParticleSystem::removeParticle() {
+    if (!m_particles.empty()) {
+        m_particles.pop_back();
+        m_vertices.resize(m_particles.size());
+    }
 }
 
 void ParticleSystem::addRepulsor(float x, float y, float strength) {
@@ -53,7 +82,7 @@ void ParticleSystem::addAttractor(float x, float y, float strength) {
 }
 
 void ParticleSystem::update(sf::Time elapsed) {
-    for (std::size_t i = 0; i < m_particles.size(); ++i) {
+    for (std::size_t i = 0; i < m_particles.size(); i++) {
         // update the particle lifetime
         Particle& p = m_particles[i];
         p.lifetime -= elapsed;
@@ -77,8 +106,6 @@ void ParticleSystem::update(sf::Time elapsed) {
 
             float finalXForce = maximumXForce;// / (distance * distance); WHY DON'T YOU WORK
             float finalYForce = maximumYForce;// / (distance * distance);
-
-            std::cout << "x: " << finalXForce << ", y: " << finalYForce << std::endl;
 
             p.velocity.x += finalXForce * elapsed.asSeconds();
             p.velocity.y += finalYForce * elapsed.asSeconds();

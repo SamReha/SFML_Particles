@@ -20,6 +20,7 @@ private:
     std::vector<Particle> m_particles;
     std::vector<ForceEmitter> m_forceEmitters;
     sf::VertexArray m_vertices;
+    sf::RectangleShape m_rect;
     sf::Time m_lifetime;
     sf::Vector2f m_emitter;
     float m_gravity;       // Acceleration due to gravity (units per second)
@@ -29,15 +30,15 @@ private:
     void resetParticle(std::size_t index);
 
 public:
-    ParticleSystem(unsigned int count) :
-        m_particles(count),
-        m_vertices(sf::Points, count),
-        m_lifetime(sf::seconds(3)),
-        m_emitter(0, 0),
-        m_gravity(0) {};
+    ParticleSystem(unsigned int count, sf::Texture* tex);
 
     void setEmitter(sf::Vector2f position);
     void setGravity(float newGravity);
+
+    int count();
+
+    void addParticle();
+    void removeParticle();
 
     void addRepulsor(float x, float y, float strength);
     void addAttractor(float x, float y, float strength);
