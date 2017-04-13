@@ -15,7 +15,7 @@ void ParticleSystem::draw(sf::RenderTarget& target, sf::RenderStates states) con
 void ParticleSystem::resetParticle(std::size_t index) {
     // give a random velocity and lifetime to the particle
     float angle = (std::rand() % 360) * 3.14f / 180.f;
-    float speed = (std::rand() % 50) + 50.f;
+    float speed = m_minSpeed + (std::rand() % (int)(m_maxSpeed - m_minSpeed));
     m_particles[index].velocity = sf::Vector2f(std::cos(angle) * speed, std::sin(angle) * speed);
     m_particles[index].lifetime = sf::milliseconds((std::rand() % 2000) + 1000);
 
@@ -28,11 +28,11 @@ void ParticleSystem::resetParticle(std::size_t index) {
     m_vertices[quadIndex + 3].position = sf::Vector2f(m_emitter.x - halfWidth, m_emitter.y + halfWidth);
 }
 
-void ParticleSystem::addVertexQuad() {;
-    m_vertices.append(sf::Vertex(sf::Vector2f(0,                   0), sf::Vector2f(0,                   0)));
-    m_vertices.append(sf::Vertex(sf::Vector2f(QUAD_WIDTH,          0), sf::Vector2f(QUAD_WIDTH,          0)));
-    m_vertices.append(sf::Vertex(sf::Vector2f(QUAD_WIDTH, QUAD_WIDTH), sf::Vector2f(QUAD_WIDTH, QUAD_WIDTH)));
-    m_vertices.append(sf::Vertex(sf::Vector2f(0,          QUAD_WIDTH), sf::Vector2f(0,          QUAD_WIDTH)));
+void ParticleSystem::addVertexQuad() {
+    m_vertices.append(sf::Vertex(sf::Vector2f(0,                   0), m_color, sf::Vector2f(0,                   0)));
+    m_vertices.append(sf::Vertex(sf::Vector2f(QUAD_WIDTH,          0), m_color, sf::Vector2f(QUAD_WIDTH,          0)));
+    m_vertices.append(sf::Vertex(sf::Vector2f(QUAD_WIDTH, QUAD_WIDTH), m_color, sf::Vector2f(QUAD_WIDTH, QUAD_WIDTH)));
+    m_vertices.append(sf::Vertex(sf::Vector2f(0,          QUAD_WIDTH), m_color, sf::Vector2f(0,          QUAD_WIDTH)));
 }
 
 void ParticleSystem::removeVertexQuad() {
@@ -40,13 +40,16 @@ void ParticleSystem::removeVertexQuad() {
 }
 
 /* Public */
-ParticleSystem::ParticleSystem(unsigned int count, sf::Texture* tex) :
+ParticleSystem::ParticleSystem(unsigned int count, sf::Texture* tex, float minSpeed, float maxSpeed) :
     m_particles(count),
     m_vertices(sf::Quads),
     m_lifetime(sf::seconds(3)),
     m_emitter(0, 0),
     m_gravity(0) {
     m_tex = tex;
+    m_color = sf::Color::White;
+    m_minSpeed = minSpeed;
+    m_maxSpeed = maxSpeed;
 
     for (int i = 0; i < count; i++) {
         addVertexQuad();
@@ -59,6 +62,18 @@ void ParticleSystem::setEmitter(sf::Vector2f position) {
 
 void ParticleSystem::setGravity(float newGravity) {
     m_gravity = newGravity;
+}
+
+void ParticleSystem::setColor(sf::Color newColor) {
+    m_color = newColor;
+}
+
+void ParticleSystem::setMinSpeed(float newSpeed) {
+    m_minSpeed = abs(newSpeed);
+}
+
+void ParticleSystem::setMaxSpeed(float newSpeed) {
+    m_maxSpeed = abs(newSpeed);
 }
 
 int ParticleSystem::count() {
@@ -137,6 +152,12 @@ void ParticleSystem::update(sf::Time elapsed) {
         m_vertices[quadIndex + 1].position += p.velocity * elapsed.asSeconds();
         m_vertices[quadIndex + 2].position += p.velocity * elapsed.asSeconds();
         m_vertices[quadIndex + 3].position += p.velocity * elapsed.asSeconds();
+
+        // update the color of the corresponding quad
+        m_vertices[quadIndex].color     = m_color;
+        m_vertices[quadIndex + 1].color = m_color;
+        m_vertices[quadIndex + 2].color = m_color;
+        m_vertices[quadIndex + 3].color = m_color;
 
         // update the alpha (transparency) of the particle according to its lifetime
         float ratio = p.lifetime.asSeconds() / m_lifetime.asSeconds();

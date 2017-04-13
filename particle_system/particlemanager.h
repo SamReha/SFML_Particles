@@ -25,7 +25,11 @@ private:
     sf::Texture* m_tex;
     sf::Time m_lifetime;
     sf::Vector2f m_emitter;
-    float m_gravity;       // Acceleration due to gravity (units per second)
+
+    float m_gravity;       // Acceleration due to gravity (pixels per second)
+    sf::Color m_color;     // Defaults to white. The color of an individual particle (can be used to filter texture color)
+    float m_minSpeed;      // The minimum speed of a particle (pixels per second);
+    float m_maxSpeed;
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
@@ -34,10 +38,13 @@ private:
     void removeVertexQuad();
 
 public:
-    ParticleSystem(unsigned int count, sf::Texture* tex);
+    ParticleSystem(unsigned int count, sf::Texture* tex, float minSpeed, float maxSpeed);
 
     void setEmitter(sf::Vector2f position);
     void setGravity(float newGravity);
+    void setColor(sf::Color newColor);
+    void setMinSpeed(float newSpeed);
+    void setMaxSpeed(float newSpeed);
 
     int count();
 
