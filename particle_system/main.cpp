@@ -29,13 +29,15 @@ int main() {
     }
 
     // create the particle system
-    ParticleSystem purpleSmoke(5000, &smokeTexture, 25.f, 75.f);
-    purpleSmoke.setGravity(-10);
+    ParticleSystem purpleSmoke(15000, &smokeTexture, 25.f, 75.f);
+    purpleSmoke.setGravity(-50);
     purpleSmoke.setColor(sf::Color::Magenta);
+    purpleSmoke.addAttractor(SCREENWIDTH / 2, SCREENHEIGHT / 2, 800);
 
     ParticleSystem sparks(40, &sparkTexture, 50.f, 350.f);
     sparks.setGravity(1000);
     sparks.setColor(sf::Color::Yellow);
+    sparks.addRepulsor(0, 0, 1600);
 
     ParticleSystem activeSystem = purpleSmoke;
 
