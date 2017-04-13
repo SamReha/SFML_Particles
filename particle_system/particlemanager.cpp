@@ -14,7 +14,7 @@ void ParticleSystem::draw(sf::RenderTarget& target, sf::RenderStates states) con
 
 void ParticleSystem::resetParticle(std::size_t index) {
     // give a random velocity and lifetime to the particle
-    float angle = (std::rand() % 360) * 3.14f / 180.f;
+    float angle = (std::rand() % m_maxAngle) * PI / 180.f;
     float speed = m_minSpeed + (std::rand() % (int)(m_maxSpeed - m_minSpeed));
     m_particles[index].velocity = sf::Vector2f(std::cos(angle) * speed, std::sin(angle) * speed);
     m_particles[index].lifetime = sf::milliseconds((std::rand() % 2000) + 1000);
@@ -50,6 +50,7 @@ ParticleSystem::ParticleSystem(unsigned int count, sf::Texture* tex, float minSp
     m_color = sf::Color::White;
     m_minSpeed = minSpeed;
     m_maxSpeed = maxSpeed;
+    m_maxAngle = 360;
 
     for (int i = 0; i < count; i++) {
         addVertexQuad();
@@ -74,6 +75,10 @@ void ParticleSystem::setMinSpeed(float newSpeed) {
 
 void ParticleSystem::setMaxSpeed(float newSpeed) {
     m_maxSpeed = abs(newSpeed);
+}
+
+void ParticleSystem::setMaxAngle(int newAngle) {
+    m_maxAngle = std::max(0, std::min(newAngle, 360));
 }
 
 int ParticleSystem::count() {

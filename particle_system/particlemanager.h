@@ -30,6 +30,7 @@ private:
     sf::Color m_color;     // Defaults to white. The color of an individual particle (can be used to filter texture color)
     float m_minSpeed;      // The minimum speed of a particle (pixels per second);
     float m_maxSpeed;
+    int m_maxAngle;        // An int [0, 360] that determines the range of possible particle ejection angles
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
@@ -45,6 +46,7 @@ public:
     void setColor(sf::Color newColor);
     void setMinSpeed(float newSpeed);
     void setMaxSpeed(float newSpeed);
+    void setMaxAngle(int newAngle);
 
     int count();
 
