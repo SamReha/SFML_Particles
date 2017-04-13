@@ -5,6 +5,8 @@
 
 #include "config.h"
 
+#define QUAD_WIDTH 64
+
 class ParticleSystem : public sf::Drawable, public sf::Transformable {
 private:
     struct Particle {
@@ -20,7 +22,7 @@ private:
     std::vector<Particle> m_particles;
     std::vector<ForceEmitter> m_forceEmitters;
     sf::VertexArray m_vertices;
-    sf::RectangleShape m_rect;
+    sf::Texture* m_tex;
     sf::Time m_lifetime;
     sf::Vector2f m_emitter;
     float m_gravity;       // Acceleration due to gravity (units per second)
@@ -28,6 +30,8 @@ private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     void resetParticle(std::size_t index);
+    void addVertexQuad();
+    void removeVertexQuad();
 
 public:
     ParticleSystem(unsigned int count, sf::Texture* tex);

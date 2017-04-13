@@ -24,10 +24,10 @@ int main() {
     }
 
     // create the particle system
-    ParticleSystem particles(2000, &testTexture);
+    ParticleSystem particles(10000, &testTexture);
     particles.setGravity(500);
-    particles.addAttractor(SCREENWIDTH/2, SCREENHEIGHT/2, 800);
-    particles.addRepulsor(SCREENWIDTH, SCREENHEIGHT, 500);
+    //particles.addAttractor(SCREENWIDTH/2, SCREENHEIGHT/2, 800);
+    //particles.addRepulsor(SCREENWIDTH, SCREENHEIGHT, 500);
 
     sf::Text particlesCount("particles", font, 25);
     particlesCount.setColor(sf::Color::White);

@@ -6,7 +6,7 @@ void ParticleSystem::draw(sf::RenderTarget& target, sf::RenderStates states) con
     states.transform *= getTransform();
 
     // our particles don't use a texture
-    states.texture = NULL;
+    states.texture = m_tex;
 
     // draw the vertex array
     target.draw(m_vertices, states);
@@ -19,20 +19,38 @@ void ParticleSystem::resetParticle(std::size_t index) {
     m_particles[index].velocity = sf::Vector2f(std::cos(angle) * speed, std::sin(angle) * speed);
     m_particles[index].lifetime = sf::milliseconds((std::rand() % 2000) + 1000);
 
-    // reset the position of the corresponding vertex
-    m_vertices[index].position = m_emitter;
+    // reset the position of the corresponding quad
+    int quadIndex = index * 4;
+    int halfWidth = QUAD_WIDTH / 2;
+    m_vertices[quadIndex].position     = sf::Vector2f(m_emitter.x - halfWidth, m_emitter.y - halfWidth);
+    m_vertices[quadIndex + 1].position = sf::Vector2f(m_emitter.x + halfWidth, m_emitter.y - halfWidth);
+    m_vertices[quadIndex + 2].position = sf::Vector2f(m_emitter.x + halfWidth, m_emitter.y + halfWidth);
+    m_vertices[quadIndex + 3].position = sf::Vector2f(m_emitter.x - halfWidth, m_emitter.y + halfWidth);
+}
+
+void ParticleSystem::addVertexQuad() {;
+    m_vertices.append(sf::Vertex(sf::Vector2f(0,                   0), sf::Vector2f(0,                   0)));
+    m_vertices.append(sf::Vertex(sf::Vector2f(QUAD_WIDTH,          0), sf::Vector2f(QUAD_WIDTH,          0)));
+    m_vertices.append(sf::Vertex(sf::Vector2f(QUAD_WIDTH, QUAD_WIDTH), sf::Vector2f(QUAD_WIDTH, QUAD_WIDTH)));
+    m_vertices.append(sf::Vertex(sf::Vector2f(0,          QUAD_WIDTH), sf::Vector2f(0,          QUAD_WIDTH)));
+}
+
+void ParticleSystem::removeVertexQuad() {
+    m_vertices.resize(m_vertices.getVertexCount() - 4);
 }
 
 /* Public */
 ParticleSystem::ParticleSystem(unsigned int count, sf::Texture* tex) :
     m_particles(count),
-    m_vertices(sf::Points, count),
+    m_vertices(sf::Quads),
     m_lifetime(sf::seconds(3)),
     m_emitter(0, 0),
     m_gravity(0) {
-    sf::Vector2f rectSize(64, 64);
-    m_rect.setSize(rectSize);
-    m_rect.setTexture(tex, false);
+    m_tex = tex;
+
+    for (int i = 0; i < count; i++) {
+        addVertexQuad();
+    }
 }
 
 void ParticleSystem::setEmitter(sf::Vector2f position) {
@@ -50,14 +68,14 @@ int ParticleSystem::count() {
 void ParticleSystem::addParticle() {
     Particle newParticle;
     m_particles.push_back(newParticle);
-    m_vertices.resize(m_particles.size());
+    addVertexQuad();
     resetParticle(m_particles.size() - 1);
 }
 
 void ParticleSystem::removeParticle() {
     if (!m_particles.empty()) {
         m_particles.pop_back();
-        m_vertices.resize(m_particles.size());
+        removeVertexQuad();
     }
 }
 
@@ -83,6 +101,8 @@ void ParticleSystem::addAttractor(float x, float y, float strength) {
 
 void ParticleSystem::update(sf::Time elapsed) {
     for (std::size_t i = 0; i < m_particles.size(); i++) {
+        int quadIndex = i * 4;
+
         // update the particle lifetime
         Particle& p = m_particles[i];
         p.lifetime -= elapsed;
@@ -96,8 +116,9 @@ void ParticleSystem::update(sf::Time elapsed) {
 
         // Update velocity w/ respect to attractors / repulsors
         for (auto forceEmitter : m_forceEmitters) {
-            float deltaX = forceEmitter.position.x - m_vertices[i].position.x;
-            float deltaY = forceEmitter.position.y - m_vertices[i].position.y;
+            sf::Vector2f particlePos = m_vertices[quadIndex].position;
+            float deltaX = forceEmitter.position.x - particlePos.x;
+            float deltaY = forceEmitter.position.y - particlePos.y;
             float angleInRadians = atan2(deltaY, deltaX);
             float distance = sin(angleInRadians) * deltaY;
 
@@ -111,11 +132,18 @@ void ParticleSystem::update(sf::Time elapsed) {
             p.velocity.y += finalYForce * elapsed.asSeconds();
         }
 
-        // update the position of the corresponding vertex
-        m_vertices[i].position += p.velocity * elapsed.asSeconds();
+        // update the position of the corresponding quad
+        m_vertices[quadIndex].position     += p.velocity * elapsed.asSeconds();
+        m_vertices[quadIndex + 1].position += p.velocity * elapsed.asSeconds();
+        m_vertices[quadIndex + 2].position += p.velocity * elapsed.asSeconds();
+        m_vertices[quadIndex + 3].position += p.velocity * elapsed.asSeconds();
 
         // update the alpha (transparency) of the particle according to its lifetime
         float ratio = p.lifetime.asSeconds() / m_lifetime.asSeconds();
-        m_vertices[i].color.a = static_cast<sf::Uint8>(ratio * 255);
+        sf::Uint8 alpha = static_cast<sf::Uint8>(ratio * 255);
+        m_vertices[quadIndex].color.a     = alpha;
+        m_vertices[quadIndex + 1].color.a = alpha;
+        m_vertices[quadIndex + 2].color.a = alpha;
+        m_vertices[quadIndex + 3].color.a = alpha;
     }
 }
